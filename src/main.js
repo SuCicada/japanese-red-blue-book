@@ -26,22 +26,24 @@
 
   document.getElementById('content').innerHTML = html;
 
-  // 如果URL中有锚点，自动滚动到对应位置
-  // if (window.location.hash) {
-  //   const element = document.querySelector(window.location.hash);
-  //   if (element) {
-  //     element.scrollIntoView({ behavior: 'smooth' });
-  //   }
-  // }
+
+
   const lastLine = localStorage.getItem('last_line');
-  if (lastLine) {
+  console.log("lastLine", lastLine);
+  if (lastLine && !window.location.hash) {
     location.hash = `#${lastLine}`;
     // const element = document.querySelector(`#line-${lastLine}`);
     // if (element) {
-    // element.scrollIntoView({ behavior: 'smooth' });
+    //   element.scrollIntoView({ behavior: 'smooth' });
     // }
   }
-
+  // 如果URL中有锚点，自动滚动到对应位置
+  if (window.location.hash) {
+    const element = document.querySelector(window.location.hash);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
   // 跟踪所有可见元素的集合
   const visibleElements = new Set();
@@ -80,11 +82,11 @@
 })();
 
 const audioMap = new Map();
-const audio = new Audio();
+let playingAudio 
 async function getAudioUrl(i, text) {
   if (import.meta.env.PROD || import.meta.env.VITE_ENABLE_AUDIO_URL) {
     return `${import.meta.env.VITE_AUDIO_URL_BASE}${i}_${text}.mp3`;
-  
+
   } else {
     const payload = {
       tts_engine: import.meta.env.VITE_TTS_ENGINE,
@@ -104,15 +106,20 @@ async function getAudioUrl(i, text) {
 }
 async function playAudio(i) {
   const text = document.getElementById(`text-${i}`).textContent;
-  let audioUrl
-  if (audioMap.has(i)) {
-    audioUrl = audioMap.get(i);
-  } else {
-    audioUrl = await getAudioUrl(i, text);
+  // let audioUrl
+  let audio = audioMap.get(i);
+  if (!audio) {
+    audio = new Audio();
+    audio.src = await getAudioUrl(i, text);
+    
+    audioMap.set(i, audio);
   }
 
-  audioMap.set(i, audioUrl);
-  audio.src = audioUrl;
+  if (playingAudio) {
+    playingAudio.pause();
+  }
+  playingAudio = audio;
+
   audio.currentTime = 0;
   audio.play();
 }

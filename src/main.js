@@ -38,7 +38,7 @@
     location.hash = `#${lastLine}`;
     // const element = document.querySelector(`#line-${lastLine}`);
     // if (element) {
-      // element.scrollIntoView({ behavior: 'smooth' });
+    // element.scrollIntoView({ behavior: 'smooth' });
     // }
   }
 
@@ -81,37 +81,36 @@
 
 const audioMap = new Map();
 const audio = new Audio();
+async function getAudioUrl(i, text) {
+  if (import.meta.env.PROD || import.meta.env.VITE_ENABLE_AUDIO_URL) {
+    return `${import.meta.env.VITE_AUDIO_URL_BASE}${i}_${text}.mp3`;
+  
+  } else {
+    const payload = {
+      tts_engine: import.meta.env.VITE_TTS_ENGINE,
+      text,
+      front_tts: import.meta.env.VITE_FRONT_TTS
+    }
+    const params = new URLSearchParams(payload).toString();
+    const url = `${import.meta.env.VITE_TTS_API_URL}?${params}`
 
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('音频加载失败');
+    }
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  }
+}
 async function playAudio(i) {
   const text = document.getElementById(`text-${i}`).textContent;
-  const tts_engine = 'lain_style_bert_vits2';
-  // const tts_engine = 'lain_so_vits_svc';
   let audioUrl
   if (audioMap.has(i)) {
     audioUrl = audioMap.get(i);
   } else {
-
-    try {
-      const payload = {
-        tts_engine: import.meta.env.VITE_TTS_ENGINE,
-        text,
-        front_tts: import.meta.env.VITE_FRONT_TTS
-      }
-      const params = new URLSearchParams(payload).toString();
-      const url = `${import.meta.env.VITE_TTS_API_URL}?${params}`
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('音频加载失败');
-      }
-      const blob = await response.blob();
-      audioUrl = URL.createObjectURL(blob);
-
-    } catch (error) {
-      console.error('播放出错:', error);
-      alert('音频播放失败');
-    }
+    audioUrl = await getAudioUrl(i, text);
   }
+
   audioMap.set(i, audioUrl);
   audio.src = audioUrl;
   audio.currentTime = 0;

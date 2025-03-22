@@ -12,7 +12,7 @@
       ${yaml.map((line, i) => {
     i = i + 1;
     return `
-        <tr id="line-${i}">
+        <tr id="line-${i}" href="#line-${i}">
           <td style="width: 100px;">${i}</td>
           <td style="width: 100px;">
             <span onclick="playAudio(${i})">▶️</span>
@@ -25,6 +25,58 @@
     `
 
   document.getElementById('content').innerHTML = html;
+
+  // 如果URL中有锚点，自动滚动到对应位置
+  // if (window.location.hash) {
+  //   const element = document.querySelector(window.location.hash);
+  //   if (element) {
+  //     element.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // }
+  const lastLine = localStorage.getItem('last_line');
+  if (lastLine) {
+    location.hash = `#${lastLine}`;
+    // const element = document.querySelector(`#line-${lastLine}`);
+    // if (element) {
+      // element.scrollIntoView({ behavior: 'smooth' });
+    // }
+  }
+
+
+  // 跟踪所有可见元素的集合
+  const visibleElements = new Set();
+
+  // 添加滚动事件监听
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        visibleElements.add(entry.target);
+      } else {
+        visibleElements.delete(entry.target);
+      }
+    });
+
+    if (visibleElements.size > 0) {
+      // 转换为数组并找出最小ID
+      const minElement = Array.from(visibleElements).reduce((min, current) => {
+        const minId = parseInt(min.id.replace('line-', ''));
+        const currentId = parseInt(current.id.replace('line-', ''));
+        return currentId < minId ? current : min;
+      });
+
+      // 更新URL为最小ID的锚点
+      history.replaceState(null, null, `#${minElement.id}`);
+      localStorage.setItem('last_line', minElement.id);
+    }
+  }, {
+    threshold: 0.5,
+    rootMargin: '0px'
+  });
+
+  // 为每一行添加观察
+  document.querySelectorAll('tr[id^="line-"]').forEach(tr => {
+    observer.observe(tr);
+  });
 })();
 
 const audioMap = new Map();

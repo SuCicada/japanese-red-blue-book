@@ -2,9 +2,12 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? '/red-blue-book-1000/' : '/',
   server: {
+    host: "0.0.0.0",
     port: 8000,
-    open: false
+    open: false,
+    allowedHosts: ['mac.sucicada.me']
   },
   publicDir: 'public',
   build: {

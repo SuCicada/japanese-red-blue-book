@@ -1,0 +1,49 @@
+
+#playButton {
+  /* background-color: #4CAF50; */
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: background-color 0.3s;
+  margin-left: 20px;
+}
+
+
+#playButton svg {
+  width: 24px;
+  height: 24px;
+}
+#playButton{
+  background-color: #22c55e;
+}
+#playButton:hover {
+  background-color: #45a049;
+}
+
+#playButton.playing{
+  background-color: #ef4444;
+}
+#playButton.playing:hover{
+  background-color: #dc2626; /* 深红色 */
+}
+
+#playButton .play-icon{
+  display: block;
+}
+#playButton .stop-icon{
+  display: none;
+}
+
+#playButton.playing .play-icon{
+  display: none;
+}
+#playButton.playing .stop-icon{
+  display: block;
+}
+

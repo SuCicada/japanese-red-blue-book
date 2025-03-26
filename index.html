@@ -4,34 +4,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>红蓝宝书1000题 - 语音合成</title>
   <link rel="icon" href="favicon.ico" />
-
-  <style>
-    table {
-      font-size: 20px;
-      width: 100%;
-    }
-
-    td {
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
-
-    tr:hover {
-      background-color: #f5f5f5;
-    }
-
-    td:nth-child(3) {
-      width: 100%;
-    }
-  </style>
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <META HTTP-EQUIV="Expires" CONTENT="-1">
 </head>
 
 <body>
+  <div class="toolbar">
+    <button id="playButton">
+      <svg class="play-icon" viewBox="0 0 24 24" width="24" height="24">
+        <path fill="currentColor" d="M8 5v14l11-7z" />
+      </svg>
+      <svg class="stop-icon" viewBox="0 0 24 24" width="24" height="24">
+        <path fill="currentColor" d="M6 6h12v12H6z"/>
+      </svg>
+    </button>
+  </div>
+  <div id="content-container">
+  </div>
   <div id="content"></div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 <script type="module" src="src/main.js"></script>
-
+<script type="module" src="src/audio.js"></script>
+<script type="module" src="src/autoPlay.js"></script>
+<link rel="stylesheet" href="src/autoPlay.css">
+<link rel="stylesheet" href="src/index.css">
 </html>

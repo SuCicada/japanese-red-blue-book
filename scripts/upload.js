@@ -54,8 +54,8 @@ async function isExistInS3(key) {
   }
 }
 
-function getKey(index, text) {
-  return `${s3_dir}${index}_${text}.mp3`;
+function getKey(index) {
+  return `${s3_dir}${index}.mp3`;
 }
 
 async function uploadAudioToS3(key, text, force = false) {
@@ -77,7 +77,7 @@ async function uploadAudioToS3(key, text, force = false) {
   try {
     // Upload to S3
     const data = await s3.upload(params).promise();
-    console.log(`File uploaded successfully at ${data.Location}`);
+    // console.log(`File uploaded successfully at ${data.Location}`);
     return data.Location;
   } catch (error) {
     console.error('Error uploading file:', error);
@@ -96,18 +96,21 @@ async function all() {
   let textList = await getTextList();
   // textList = textList.slice(0, 1);
   for (let i = 0; i < textList.length; i++) {
-    const key = getKey(i + 1, textList[i]);
+    const key = getKey(i + 1);
     await uploadAudioToS3(key, textList[i]);
   }
-}
+} 
 
 async function custom() {
   let textList = await getTextList();
-  const key = getKey(13, textList[12]);
+  const index = 80
+  const key = getKey(index);
   await uploadAudioToS3(key,
-    'い勇ましい義士たちがこの町を守ってくれた。',
-    true);
+    textList[index - 1],
+    // "急病にかかった彼は、簡単な手続きを経て入院した。",
+    true);  
 }
 (async () => {
   await custom();
+  // await all();
 })();

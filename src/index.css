@@ -1,0 +1,52 @@
+table {
+  font-size: 20px;
+  width: 100%;
+}
+
+td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+tr.playing {
+  background-color: #e8f4fe;  /* 柔和的蓝色背景 */
+  color: #1976d2;  /* 深蓝色文字 */
+}
+
+/* td:nth-child(3) {
+  width: 100%;
+} */
+
+.toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  height: 48px;
+  /* display: flex; */
+  /* align-items: center; */
+}
+
+#content {
+  position: relative;
+  /* overflow-y: auto; */
+  /* margin-top: 68px; */
+  margin-bottom: 68px;
+}
+
+#content-container {
+  height: calc(100vh - 68px);
+  top: 68px;
+  position: fixed;
+  overflow-y: auto;
+  width: 100%;
+  left: 0;
+}
+

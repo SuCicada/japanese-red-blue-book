@@ -13,11 +13,11 @@
     i = i + 1;
     return `
         <tr id="line-${i}" href="#line-${i}">
-          <td style="width: 100px;">${i}</td>
-          <td style="width: 100px;">
-            <span onclick="playAudio(${i})">▶️</span>
+          <td style="width: 5px;">${i}</td>
+          <td style="width: 90%;" id="text-${i}">${line}</td>
+          <td style="width: 5px;" onclick="playAudio(${i})">
+            <span>▶️</span>
           </td>
-          <td id="text-${i}">${line}</td>
         </tr>
         `.trim()
   }).join('')}
@@ -27,7 +27,7 @@
   document.getElementById('content').innerHTML = html;
 
 
-
+  // ========================================================
   const lastLine = localStorage.getItem('last_line');
   console.log("lastLine", lastLine);
   if (lastLine && !window.location.hash) {
@@ -72,55 +72,38 @@
     }
   }, {
     threshold: 0.5,
-    rootMargin: '0px'
+    rootMargin: '0px',
+    // root: document.getElementById('content-container')
   });
 
   // 为每一行添加观察
   document.querySelectorAll('tr[id^="line-"]').forEach(tr => {
     observer.observe(tr);
   });
+
+  registerLinesClickEvent();
+
 })();
 
-const audioMap = new Map();
-let playingAudio 
-async function getAudioUrl(i, text) {
-  if (import.meta.env.PROD || import.meta.env.VITE_ENABLE_AUDIO_URL) {
-    return `${import.meta.env.VITE_AUDIO_URL_BASE}${i}_${text}.mp3`;
-
-  } else {
-    const payload = {
-      tts_engine: import.meta.env.VITE_TTS_ENGINE,
-      text,
-      front_tts: import.meta.env.VITE_FRONT_TTS
+export function highlightLine(lineIndex) {
+  const line = `#line-${lineIndex}`;
+  const tr = document.querySelector(line);
+  document.querySelectorAll('tr[id^="line-"]').forEach(trr => {
+    if (trr.id !== line) {
+      trr.classList.remove('playing');
     }
-    const params = new URLSearchParams(payload).toString();
-    const url = `${import.meta.env.VITE_TTS_API_URL}?${params}`
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('音频加载失败');
-    }
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
-  }
+  });
+  tr.classList.toggle('playing');
 }
-async function playAudio(i) {
-  const text = document.getElementById(`text-${i}`).textContent;
-  // let audioUrl
-  let audio = audioMap.get(i);
-  if (!audio) {
-    audio = new Audio();
-    audio.src = await getAudioUrl(i, text);
-    
-    audioMap.set(i, audio);
-  }
 
-  if (playingAudio) {
-    playingAudio.pause();
-  }
-  playingAudio = audio;
-
-  audio.currentTime = 0;
-  audio.play();
+// 为每一行添加点击事件
+function registerLinesClickEvent( ) {
+  document.querySelectorAll('tr[id^="line-"]').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const lineIndex = tr.id.replace('line-', '');
+      highlightLine(lineIndex);
+    });
+  });
 }
-window.playAudio = playAudio;
+
+

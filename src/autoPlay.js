@@ -4,6 +4,7 @@ const playButton = document.getElementById('playButton');
 
 async function autoPlay(index, hashIndex) {
   if (!isValid(index)) {
+    startAutoPlay = false;
     return;
   }
 
@@ -55,14 +56,13 @@ playButton.addEventListener('click', async () => {
   console.log('playButton clicked');
   startAutoPlay = !startAutoPlay
 
+  playButton.classList.toggle('playing');
   if (startAutoPlay) {
-    playButton.classList.add('playing');
     const index = getLineIndex();
     const hashIndex = getHashIndex();
     autoPlay(index, hashIndex);
 
   } else {
-    playButton.classList.remove('playing');
     playingAudio.pause();
   }
 });
